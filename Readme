@@ -1,0 +1,137 @@
+Descripción del proyecto
+
+Este repositorio contiene dos prácticas desarrolladas para la materia Arquitectura y Servicios Distribuidos. El objetivo fue comprender la diferencia entre procesos y hilos mediante la implementación de dos ejercicios en Python:
+
+Procesamiento de imágenes usando procesos (multiprocessing)
+
+Simulación de cajeros automáticos usando hilos (threading)
+
+Los códigos originales venían incompletos → se realizaron modificaciones para garantizar ejecución correcta, manejo de recursos compartidos y evitar condiciones de carrera.
+
+ ¿Qué se solucionó?
+Práctica	Problema detectado	Solución implementada
+Procesos (multiprocessing)	Los procesos no compartían correctamente los resultados	Se utilizó multiprocessing.Value para compartir valores entre procesos 
+
+Practica-Procesos
+
+
+Procesos – optimización	Se creaban procesos manualmente uno por uno	Se implementó versión alternativa usando multiprocessing.Pool
+Hilos (threading)	Condición de carrera sobre el saldo bancario	Se agregó un Lock() para sincronización entre hilos 
+
+Practica-Hilos
+
+
+Hilos – debug	No se mostraba cuál hilo tomaba el lock	Se añadió impresión del ID del hilo al adquirir el lock
+ Tecnologías utilizadas
+
+Python 3.12
+
+multiprocessing
+
+threading
+
+ Ejecución
+python procesos.py
+python hilos.py
+
+ Procesos (multiprocessing)
+ Objetivo de aprendizaje
+
+Comprender que cada proceso tiene su propia memoria, por lo que la comunicación se debe realizar mediante mecanismos explícitos como multiprocessing.Value o Queue 
+
+Practica-Procesos
+
+.
+
+ Descripción
+
+Se desarrolló un sistema que procesa varias imágenes en paralelo.
+Cada proceso trabaja independientemente en una imagen y devuelve su tamaño simulado.
+
+"Crear un sistema que procese múltiples imágenes en paralelo usando procesos, donde cada proceso trabaje en una imagen diferente" 
+
+Practica-Procesos
+
+ Características implementadas
+
+Uso de procesos manuales (multiprocessing.Process)
+
+Manejo de memoria compartida con multiprocessing.Value
+
+Contador de imágenes procesadas usando get_lock() para evitar acceso simultáneo
+
+Versión optimizada usando multiprocessing.Pool
+
+ Ejecución del programa
+python procesos.py
+
+
+Al finalizar, se muestra un resumen con:
+
+número de imágenes procesadas
+
+tiempo total de ejecución
+
+resultados individuales por proceso 
+
+Practica-Procesos
+
+ Conclusiones
+
+Cada proceso posee un PID distinto porque se ejecuta como un intérprete independiente de Python 
+
+Practica-Procesos
+
+Las variables globales NO se comparten entre procesos
+
+multiprocessing.Value permite compartir resultados entre procesos
+
+ Hilos (Threading)
+ Objetivo de aprendizaje
+
+Comprender cómo los hilos comparten memoria y los problemas derivados de la concurrencia 
+
+Practica-Hilos
+
+.
+
+ Descripción
+
+Se simuló un sistema bancario donde varios clientes (hilos) retiran dinero de la misma cuenta.
+
+“Simula un sistema bancario donde múltiples clientes acceden simultáneamente a 3 cajeros automáticos para retirar dinero de una cuenta compartida.” 
+
+Practica-Hilos
+
+ Problema inicial
+
+El código no utilizaba sincronización.
+Resultado → condiciones de carrera, saldos incorrectos o incluso negativos.
+
+Se evidenciaba especialmente cuando había sleep() dentro de la operación de retiro 
+
+Practica-Hilos
+
+.
+
+ Solución aplicada
+
+Se agregó un Lock() en la sección crítica:
+
+with self.lock:
+    self.saldo -= cantidad
+
+
+Esto garantiza acceso exclusivo al recurso compartido (saldo).
+
+ Ejecución del programa
+python hilos.py
+
+
+El programa muestra:
+
+operaciones de retiro
+
+saldo final correcto cuando se usa lock
+
+identificación del hilo que obtiene el lock
